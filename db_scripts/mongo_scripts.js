@@ -1,8 +1,9 @@
+import { getMaxListeners } from "cluster";
 
 // this a mongo api shell script
 
 // creates a new instance of connenction to the refereced database
-const db = new Mongo().getDB('fika-safe');
+const db = new Mongo().getDB("fika-safe");
 //
 // db.issues.remove({});
 // // inserting some mock data
@@ -26,3 +27,20 @@ const db = new Mongo().getDB('fika-safe');
 // db.issues.createIndex({ owner: 1 });
 // db.issues.createIndex({ created: 1 });
 // db.issues.createIndex({ status: 1 });
+//MOCK DATA
+const sacco1 = new sacco({
+  name: "Stima Sacco",
+  address: 33 - 40100,
+  registration_number: A100742346K,
+
+  contacts: {
+    email: "stimasacco@hotmail.com",
+    telephone_number: +254702106484
+  },
+
+  about: {
+    description:
+      "Dealing with clients of differnt types including mortocyclists",
+    website: "https://stimasacco.com"
+  }
+});

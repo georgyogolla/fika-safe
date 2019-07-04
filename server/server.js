@@ -3,6 +3,7 @@ import sourceMapSupport from 'source-map-support'
 import { MongoClient } from 'mongodb';
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
+require('babel-polyfill')
 
 
 
@@ -38,8 +39,20 @@ var processQuery = qpm({
 app.use(bodyParser.json());
 
 // mongoose models
-import { Sacco, Rider } from 'db.models.js'
+import { Sacco, Rider } from './db.models.js'
 // OUR SERVER CODE WILL GO HEREa
+
+app.get("/api/sacco", (req, res) => {
+    db.collection("sacco")
+      .find()
+      .then(sacco => {
+        res.json({ sacco });
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(500).json({ message: `Internal Server Error: ${error}` });
+      });
+  });
 
 app.get('/', (req, res) => {
     res.json(`this is our first server page`);
@@ -48,15 +61,10 @@ app.get('/', (req, res) => {
 
 let db = null;
 
-mongoose.connect('mongodb://localhost/fika-safe').then((client) => {
-    db = client.db('fika-safe');
-
-    // START THE SERVER
-    app.listen(3000, () => {
-        console.log("Listening on port 3001")
+mongoose.connect('mongodb://127.0.0.1:27017/fika-safe', { useNewUrlParser: true })
+    .then(async () => {
+        app.listen(3000, () => {
+            console.log("Listening on port 3000")
+        });
     });
-}).catch((err) => {
-    console.log(err.stack);
-
-});
 
