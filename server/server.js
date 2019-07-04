@@ -3,7 +3,11 @@ import sourceMapSupport from 'source-map-support'
 import { MongoClient } from 'mongodb';
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
+<<<<<<< HEAD
 require('babel-polyfill')
+=======
+require('babel-polyfill');
+>>>>>>> 9a4b41cf95b2dea9339a13b3338b614e0166fe29
 
 
 

@@ -50,6 +50,7 @@ var processQuery = qpm({
 app.use(bodyParser.json()); // mongoose models
 
 // OUR SERVER CODE WILL GO HEREa
+<<<<<<< HEAD
 app.get("/api/sacco", function (req, res) {
   db.collection("sacco").find().then(function (sacco) {
     res.json({
@@ -62,6 +63,8 @@ app.get("/api/sacco", function (req, res) {
     });
   });
 });
+=======
+>>>>>>> 9a4b41cf95b2dea9339a13b3338b614e0166fe29
 app.get('/', function (req, res) {
   res.json("this is our first server page");
 });
