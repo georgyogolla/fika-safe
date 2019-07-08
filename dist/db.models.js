@@ -9,7 +9,6 @@ var mongooseUniqueValidator = require('mongoose-unique-validator'); // SCHEMA BL
 
 
 var saccoSchema = new _mongoose.Schema({
-  // _id: Schema.Types.ObjectId,
   name: {
     type: String,
     required: true
@@ -45,13 +44,12 @@ var saccoSchema = new _mongoose.Schema({
         },
         message: 'Webpage URL must start with https://'
       }
-    } // ....
+    }
+  } // ....
 
-  }
 }); // RIDER SCHEMA
 
 var riderSchema = new _mongoose.Schema({
-  // _id: Schema.Types.ObjectId,// hashed
   name: {
     first_name: {
       type: String,
@@ -132,13 +130,13 @@ var riderSchema = new _mongoose.Schema({
   }],
   // THIS IS WHERE WE REFERENCE THE RIDER TO THEIR RESPECTIVE SACCOS
   sacco: {
-    type: _mongoose.Schema.Types.ObjectId,
+    type: _mongoose["default"].Schema.Types.ObjectId,
     ref: 'Sacco'
   }
 }); // USING PLUGINS T
 
 saccoSchema.plugin(mongooseUniqueValidator);
-riderSchema.plugin(mongooseUniqueValidator); // CREATING AND SAVING MONGOOSE MODEL 
+riderSchema.plugin(mongooseUniqueValidator); // CREATING AND SAVING MONGOOSE MODEL
 // THIS CAN ALSO BE EXPORTED TO ANOTHER MODULARISED FILE
 
 var Sacco = _mongoose["default"].model('Sacco', saccoSchema);
