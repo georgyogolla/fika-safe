@@ -1,14 +1,24 @@
 import sourceMapSupport from 'source-map-support';
 // import queryString from 'query-String'
 // import { MongoClient } from 'mongodb';
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
+// mongoose models    .
+
+<<<<<<< HEAD
 // mongoose models
 // eslint-disable-next-line import/extensions
 // import { Sacco, Rider } from './db.models';
 
 // eslint-disable-next-line import/order
 const {Sacco, Rider} = require("./db.models");
+=======
+import { Sacco, Rider } from './db.models.js';
+>>>>>>> 45496f83e846afd11614f2499f9c065ccff3170f
+
+
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 
 require('babel-polyfill');
 
@@ -23,11 +33,12 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // mounting other middlewares into our server.js
-// app.use(express.static('static'));
+app.use(express.static('static'));
 
 
 const qpm = require('query-params-mongo');
 const mongodb = require('mongodb');
+const db = require('./database/keys').mongodbURI;
 
 const processQuery = qpm({
   autoDetect: [{ fieldPattern: /_id$/, dataType: 'objectId' }],
@@ -104,7 +115,9 @@ app.get('api/riders/:id', (req, res) => {
 
 /* SAVE RIDERS */
 app.post('api/riders', (req, res) => {
+
   const newRider = req.body;
+
   Rider.create(newRider).then((result) => {
     Rider.findById({ _id: result.insertedId }).then(((addedRider) => {
       res.json(addedRider);
@@ -155,6 +168,7 @@ app.get('/api/saccos', (req, res) => {
     .exec()
     .then((saccos) => {
       res.status(200).json(saccos);
+      console.log(saccos)
     }).catch((err) => {
       res.send(`Internal server error${err.stack}`).status(400);
     });
@@ -185,15 +199,16 @@ app.post('api/saccos', (req, res) => {
   });
 });
 
-app.delete('api/saccos/:id', (req, res) => {
+app.delete('/api/saccos/:id', (req, res) => {
   let saccosId;
   try {
     saccosId = req.params.id;
+    console.log(saccosId)
   } catch (error) {
     res.status(400).send({ message: `Invalid saccos ID:${saccosId}` });
   }
   // THE REQ.BODY IS OPTIONAL INTHE FINDBYIDANREMOVE METHOD
-  Rider.findByIdAndRemove({ _id: saccosId }, req.body).then((result) => {
+  Sacco.findByIdAndRemove({ _id: saccosId }).then((result) => {
     res.json(result);
   }).catch((err) => {
     console.log({ message: `Unable to delelete the saccos profile ${err}` });
@@ -220,8 +235,13 @@ app.put('api/saccos/:id', (req, res) => {
 
 
 // creating a connection to mongoose
+<<<<<<< HEAD
 
-mongoose.connect('mongodb://127.0.0.1:27017/fika-safe', { useNewUrlParser: true })
+mongoose.connect('mongodb://localhost/fika-safe', { useNewUrlParser: true })
+=======
+// 'mongodb://localhost/fika-safe'
+mongoose.connect(db, { useNewUrlParser: true })
+>>>>>>> f862ba6e695a4ceb9ba34e811ac9e620ae4dfd25
   .then(() => {
     app.listen(3000, () => {
       console.log('Listening on port 3000');
