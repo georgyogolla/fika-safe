@@ -4,8 +4,6 @@ var _sourceMapSupport = _interopRequireDefault(require("source-map-support"));
 
 var _mongoose = _interopRequireWildcard(require("mongoose"));
 
-var _dbModels = require("./db.models.js");
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -13,28 +11,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 // import queryString from 'query-String'
 // import { MongoClient } from 'mongodb';
 // mongoose models
-require("babel-polyfill");
+// eslint-disable-next-line import/extensions
+// import { Sacco, Rider } from './db.models';
+// eslint-disable-next-line import/order
+var _require = require("./db.models"),
+    Sacco = _require.Sacco,
+    Rider = _require.Rider;
 
-var ObjectId = require("mongodb").ObjectID;
+require('babel-polyfill');
+
+var ObjectId = require('mongodb').ObjectID;
 
 _sourceMapSupport["default"].install();
 
-var express = require("express");
+var express = require('express');
 
-var bodyParser = require("body-parser"); // an instance of express
+var bodyParser = require('body-parser'); // an instance of express
 
 
 var app = express(); // mounting other middlewares into our server.js
 // app.use(express.static('static'));
 
-var qpm = require("query-params-mongo");
+var qpm = require('query-params-mongo');
 
-var mongodb = require("mongodb");
+var mongodb = require('mongodb');
 
 var processQuery = qpm({
   autoDetect: [{
     fieldPattern: /_id$/,
-    dataType: "objectId"
+    dataType: 'objectId'
   }],
   converters: {
     objectId: mongodb.ObjectID
@@ -43,15 +48,15 @@ var processQuery = qpm({
 app.use(bodyParser.json()); // OUR SERVER CODE WILL GO HERE
 // BASIC CRUD APIS
 
-app.get("/", function (req, res) {
-  res.json("this is our first server page");
+app.get('/', function (req, res) {
+  res.json('this is our first server page');
 });
-app.post("/api/riders", function (req, res) {
+app.post('/api/riders', function (req, res) {
   if (req.body.insurance.issue_date) req.body.insurance.issue_date = new Date(req.body.insurance.issue_date);
-  var newRider = new _dbModels.Rider(req.body);
+  var newRider = new Rider(req.body);
   newRider.save().then(function (rider) {
     console.log({
-      message: "The rider was added successfully"
+      message: 'The rider was added successfully'
     });
     res.status(200).json({
       rider: rider
@@ -62,13 +67,13 @@ app.post("/api/riders", function (req, res) {
     });
   });
 });
-app.post("/api/saccos", function (req, res) {
+app.post('/api/saccos', function (req, res) {
   console.log(req.body);
-  var newSacco = new _dbModels.Sacco(req.body); // if (!new_sacco._id) new_sacco._id = Schema.Types.ObjectId;
+  var newSacco = new Sacco(req.body); // if (!new_sacco._id) new_sacco._id = Schema.Types.ObjectId;
 
   newSacco.save().then(function (sacco) {
     console.log({
-      message: "The sacco was added successfully"
+      message: 'The sacco was added successfully'
     });
     res.status(200).json({
       sacco: sacco
@@ -81,10 +86,10 @@ app.post("/api/saccos", function (req, res) {
 });
 /* GET ALL RIDERS */
 
-app.get("/api/riders", function (req, res) {
-  _dbModels.Rider.find().then(function (rider) {
+app.get('/api/riders', function (req, res) {
+  Rider.find().then(function (rider) {
     if (!rider) res.status(404).json({
-      message: "No avilable Riders in the system"
+      message: 'No avilable Riders in the system'
     });else res.json(rider);
   })["catch"](function (error) {
     console.log(error);
@@ -95,7 +100,7 @@ app.get("/api/riders", function (req, res) {
 });
 /* GET SINGLE RIDER BY ID */
 
-app.get("api/riders/:id", function (req, res) {
+app.get('api/riders/:id', function (req, res) {
   var ridersId;
 
   try {
@@ -106,7 +111,7 @@ app.get("api/riders/:id", function (req, res) {
     });
   }
 
-  _dbModels.Rider.findById({
+  Rider.findById({
     _id: ridersId
   }).then(function (rider) {
     if (!rider) res.status(404).json({
@@ -121,11 +126,10 @@ app.get("api/riders/:id", function (req, res) {
 });
 /* SAVE RIDERS */
 
-app.post("api/riders", function (req, res) {
+app.post('api/riders', function (req, res) {
   var newRider = req.body;
-
-  _dbModels.Rider.create(newRider).then(function (result) {
-    _dbModels.Rider.findById({
+  Rider.create(newRider).then(function (result) {
+    Rider.findById({
       _id: result.insertedId
     }).then(function (addedRider) {
       res.json(addedRider);
@@ -139,7 +143,7 @@ app.post("api/riders", function (req, res) {
 });
 /* UPDATE PRODUCT */
 
-app.put("api/riders/:id", function (req, res) {
+app.put('api/riders/:id', function (req, res) {
   var ridersId;
 
   try {
@@ -151,8 +155,7 @@ app.put("api/riders/:id", function (req, res) {
   }
 
   var newRider = req.body;
-
-  _dbModels.Rider.findByIdAndUpdate({
+  Rider.findByIdAndUpdate({
     _id: ridersId
   }, newRider).find({
     _id: ridersId
@@ -167,7 +170,7 @@ app.put("api/riders/:id", function (req, res) {
 });
 /* DELETE PRODUCT */
 
-app["delete"]("api/riders/:id", function (req, res) {
+app["delete"]('/api/riders/:id', function (req, res) {
   var ridersId;
 
   try {
@@ -179,7 +182,7 @@ app["delete"]("api/riders/:id", function (req, res) {
   } // THE REQ.BODY IS OPTIONAL INTHE FINDBYIDANREMOVE METHOD
 
 
-  _dbModels.Rider.findByIdAndRemove({
+  Rider.findByIdAndRemove({
     _id: ridersId
   }, req.body).then(function (result) {
     res.json(result);
@@ -191,14 +194,14 @@ app["delete"]("api/riders/:id", function (req, res) {
 }); // THIS IS THE SACCOS APIS
 // get all saccos
 
-app.get("/api/saccos", function (req, res) {
-  _dbModels.Sacco.find().exec().then(function (saccos) {
+app.get('/api/saccos', function (req, res) {
+  Sacco.find().exec().then(function (saccos) {
     res.status(200).json(saccos);
   })["catch"](function (err) {
     res.send("Internal server error".concat(err.stack)).status(400);
   });
 });
-app.get("/api/saccos/:id", function (req, res) {
+app.get('/api/saccos/:id', function (req, res) {
   // parameter
   var saccoId;
 
@@ -210,7 +213,7 @@ app.get("/api/saccos/:id", function (req, res) {
     });
   }
 
-  _dbModels.Sacco.findById({
+  Sacco.findById({
     _id: saccoId
   }).then(function (sacco) {
     res.json(sacco).status(200);
@@ -219,8 +222,8 @@ app.get("/api/saccos/:id", function (req, res) {
   });
 }); // post api
 
-app.post("api/saccos", function (req, res) {
-  var newSacco = new _dbModels.Sacco(req.body);
+app.post('api/saccos', function (req, res) {
+  var newSacco = new Sacco(req.body);
   newSacco.save().then(function (addedSacco) {
     // console.log(addedSacco);
     res.status(200).json(addedSacco);
@@ -230,7 +233,7 @@ app.post("api/saccos", function (req, res) {
     });
   });
 });
-app["delete"]("api/saccos/:id", function (req, res) {
+app["delete"]('api/saccos/:id', function (req, res) {
   var saccosId;
 
   try {
@@ -242,7 +245,7 @@ app["delete"]("api/saccos/:id", function (req, res) {
   } // THE REQ.BODY IS OPTIONAL INTHE FINDBYIDANREMOVE METHOD
 
 
-  _dbModels.Rider.findByIdAndRemove({
+  Rider.findByIdAndRemove({
     _id: saccosId
   }, req.body).then(function (result) {
     res.json(result);
@@ -252,7 +255,7 @@ app["delete"]("api/saccos/:id", function (req, res) {
     });
   });
 });
-app.put("api/saccos/:id", function (req, res) {
+app.put('api/saccos/:id', function (req, res) {
   var saccosId;
 
   try {
@@ -264,8 +267,7 @@ app.put("api/saccos/:id", function (req, res) {
   }
 
   var newSacco = req.body;
-
-  _dbModels.Sacco.findByIdAndUpdate({
+  Sacco.findByIdAndUpdate({
     _id: saccosId
   }, newSacco).find({
     _id: saccosId
@@ -279,15 +281,18 @@ app.put("api/saccos/:id", function (req, res) {
   });
 }); // creating a connection to mongoose
 
-_mongoose["default"].connect("mongodb://127.0.0.1:27017/fika-safe", {
+_mongoose["default"].connect('mongodb://127.0.0.1:27017/fika-safe', {
   useNewUrlParser: true
 }).then(function () {
   app.listen(3000, function () {
-    console.log("Listening on port 3000");
+    console.log('Listening on port 3000');
   });
 })["catch"](function (error) {
   console.log({
-    message: "Unable to establish a connection to the server ".concat(error)
+    message: 'Unable to est a connection to the server'
   });
-});
+}); //   }).catch((error) => { res.statFailed to load resource: the server responded with a status of 404 (Not Found)
+//     us(400).send({ message: `Unable to add the rider: ${error}` });
+//     console.log({ message: `Unable to establish a connection to the server ${error}` });
+//   });
 //# sourceMappingURL=server.js.map
